@@ -5,14 +5,14 @@
 extern const struct vector_t fov_circle[];
 extern const struct packet_t enemy_shape[];
 
-enum EnemyState
+/*enum EnemyState
 {
 	DEAD_S = 0,
 	IDLE_S,
 	WANDER_S,
 	HUNT_S,
 	EXPLODING_S
-};
+};*/
 
 struct enemy
 {
@@ -22,7 +22,8 @@ struct enemy
 	struct vector_t target;
 	unsigned int angle;
 	struct vector_t fov[2];
-	enum EnemyState state;
+	//enum EnemyState state;
+	void (*state)(struct enemy *const en);
 	unsigned int idle_timer;
 	unsigned int hunt_timer;
 	unsigned int weapon_charge;
@@ -33,7 +34,13 @@ struct enemy
 extern void enemy_update(struct enemy *en);
 
 // Enemy State Machine
-extern void enemy_handle_state(struct enemy *en);
+void enemy_state_idle(struct enemy *const en);
+void enemy_state_wander(struct enemy *const en);
+void enemy_state_hunt(struct enemy *const en);
+void enemy_state_exploding(struct enemy *const en);
+void enemy_state_dead(struct enemy *const en);
+
+//extern void enemy_handle_state(struct enemy *en);
 
 // Drawing Routine for the enemy
 extern void enemy_draw(const struct enemy *const en);

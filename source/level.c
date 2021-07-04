@@ -8,7 +8,7 @@
 
 extern const struct packet_t (*const numbers[])[];
 
-const unsigned int enemy_count_per_level[] = {2, 2, 4, 4, 6, 6};
+const unsigned int enemy_count_per_level[] = {1, 2, 3, 4, 4, 5};
 
 // The player object
 struct player hero = {
@@ -59,9 +59,11 @@ void level_init(void)
     // Reset the player position
     hero.pos = (struct vector_t){0, 0};
 
+    enemies_left = 0;
+
     unsigned int encnt;
-    if (stats.level > 6)
-        encnt = 8;
+    if (stats.level > 5)
+        encnt = 5;
     else
         encnt = enemy_count_per_level[stats.level];
 
@@ -83,7 +85,7 @@ void level_init(void)
                 .target = {0, 0},
                 .angle = 0,
                 .fov = {{-21, -1}, {-21, 1}},
-                .state = IDLE_S,
+                .state = enemy_state_idle,
                 .idle_timer = 100,
                 .hunt_timer = 150,
                 .weapon_charge = 0,

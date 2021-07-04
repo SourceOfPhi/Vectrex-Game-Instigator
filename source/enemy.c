@@ -583,11 +583,11 @@ extern struct GameStats stats;
 
 void enemy_draw(const struct enemy *const en)
 {
-	if (en->state == DEAD_S)
+	if (en->state == enemy_state_dead)
 	{
 		return;
 	}
-	else if (en->state == EXPLODING_S)
+	else if (en->state == enemy_state_exploding)
 	{
 		Reset0Ref();
 		dp_VIA_t1_cnt_lo = 110;
@@ -617,7 +617,7 @@ void enemy_draw(const struct enemy *const en)
 		Draw_Line_d(en->fov[1].y - en->fov[0].y, en->fov[1].x - en->fov[0].x);
 		Draw_Line_d(en->pos.y - en->fov[1].y, en->pos.x - en->fov[1].x);
 
-		if (en->state == HUNT_S)
+		if (en->state == enemy_state_hunt)
 		{
 			if (en->weapon_charge > 10)
 			{
@@ -659,12 +659,15 @@ void enemy_draw(const struct enemy *const en)
 
 void enemy_update(struct enemy *en)
 {
-	enemy_handle_state(en);
-	if (!(en->state == EXPLODING_S || en->state == DEAD_S))
+	// Handle enemy state
+	(*(en->state))(en);
+
+	//enemy_handle_state(en);
+	if (!(en->state == enemy_state_exploding || en->state == enemy_state_dead))
 	{
 		if (isInFOV(&hero.pos, en))
 		{
-			en->state = HUNT_S;
+			en->state = enemy_state_hunt;
 			en->hunt_timer = 150;
 		}
 
@@ -679,86 +682,82 @@ void enemy_update(struct enemy *en)
 		en->fov[0] = (struct vector_t){fov_circle[fov_angle_neg].y + en->pos.y, fov_circle[fov_angle_neg].x + en->pos.x};
 		en->fov[1] = (struct vector_t){fov_circle[fov_angle_pos].y + en->pos.y, fov_circle[fov_angle_pos].x + en->pos.x};
 
-		if (en->state == HUNT_S)
+		if (en->state == enemy_state_hunt)
 		{
 			enemy_load_weapon(en);
 		}
 	}
 }
 
-void enemy_handle_state(struct enemy *const en)
+void enemy_state_idle(struct enemy *const en)
 {
-	switch (en->state)
+	if (en->idle_timer > 0)
 	{
-	case IDLE_S:
-		if (en->idle_timer > 0)
-		{
-			en->idle_timer--;
-		}
-		else
-		{
-			en->idle_timer = Random() >> 1;
-			en->state = WANDER_S;
-		}
-		break;
-	case WANDER_S:;
-
-		if (en->pos.x == en->target.x && en->pos.y == en->target.y) // target reached
-		{
-			// Get a new random point to walk towards
-			en->target = (struct vector_t){(int)Random(), (int)Random()};
-			// Idle for a random amount of time before walking to the new target
-			en->state = IDLE_S;
-		}
-
-#ifdef ENEMYDOMOVE
-		if (en->pos.x < en->target.x)
-			en->pos.x++;
-		if (en->pos.x > en->target.x)
-			en->pos.x--;
-		if (en->pos.y > en->target.y)
-			en->pos.y--;
-		if (en->pos.y < en->target.y)
-			en->pos.y++;
-#endif
-		break;
-	case HUNT_S:
-		en->target = hero.pos;
-#ifdef ENEMYDOMOVE
-		if (en->pos.x < en->target.x)
-			en->pos.x++;
-		if (en->pos.x > en->target.x)
-			en->pos.x--;
-		if (en->pos.y > en->target.y)
-			en->pos.y--;
-		if (en->pos.y < en->target.y)
-			en->pos.y++;
-#endif
-		if (en->hunt_timer > 0)
-		{
-			en->hunt_timer--;
-		}
-		else
-		{
-			en->hunt_timer = 150;
-			en->weapon_charge = 0;
-			en->state = IDLE_S;
-		}
-
-		break;
-	case EXPLODING_S:
-		en->explosion_timer += 8;
-		if (en->explosion_timer > 100)
-		{
-			en->state = DEAD_S;
-		}
-		break;
-	case DEAD_S:
-		enemies_alive &= ~(1 << en->id); // Mark self as dead
-		break;
-	default:
-		break;
+		en->idle_timer--;
 	}
+	else
+	{
+		en->idle_timer = Random() >> 1;
+		en->state = enemy_state_wander;
+	}
+}
+
+void enemy_state_wander(struct enemy *const en)
+{
+	if (en->pos.x == en->target.x && en->pos.y == en->target.y) // target reached
+	{
+		// Get a new random point to walk towards
+		en->target = (struct vector_t){(int)Random(), (int)Random()};
+		// Idle for a random amount of time before walking to the new target
+		en->state = enemy_state_idle;
+	}
+	if (en->pos.x < en->target.x)
+		en->pos.x++;
+	if (en->pos.x > en->target.x)
+		en->pos.x--;
+	if (en->pos.y > en->target.y)
+		en->pos.y--;
+	if (en->pos.y < en->target.y)
+		en->pos.y++;
+}
+
+void enemy_state_hunt(struct enemy *const en)
+{
+	en->target = hero.pos;
+	if (en->pos.x < en->target.x)
+		en->pos.x++;
+	if (en->pos.x > en->target.x)
+		en->pos.x--;
+	if (en->pos.y > en->target.y)
+		en->pos.y--;
+	if (en->pos.y < en->target.y)
+		en->pos.y++;
+
+	if (en->hunt_timer > 0)
+	{
+		en->hunt_timer--;
+	}
+	else
+	{
+		en->hunt_timer = 150;
+		en->weapon_charge = 0;
+		en->state = enemy_state_idle;
+	}
+}
+
+void enemy_state_exploding(struct enemy *const en)
+{
+	en->explosion_timer += 8;
+	if (en->explosion_timer > 100)
+	{
+		enemies_left--;
+		en->state = enemy_state_dead;
+	}
+}
+
+void enemy_state_dead(struct enemy *const en)
+{
+	enemies_alive &= ~(1 << en->id); // Mark self as dead
 }
 
 void enemy_load_weapon(struct enemy *const en)
@@ -783,12 +782,11 @@ void enemy_attack(struct enemy *const en)
 		if (i == en->id)
 			continue;
 
-		if (enemies[i].state != DEAD_S && enemies[i].state != EXPLODING_S)
+		if (enemies[i].state != enemy_state_dead && enemies[i].state != enemy_state_exploding)
 		{
 			if (isInFOV(&(enemies[i].pos), en))
 			{
-				enemies[i].state = EXPLODING_S;
-				enemies_left--;
+				enemies[i].state = enemy_state_exploding;
 				//en->state = EXPLODING_S;
 			}
 		}

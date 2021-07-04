@@ -18,9 +18,9 @@ setlocal enableextensions enabledelayedexpansion
 @REM ENABLE_ASSEMBLY_OPTIMIZATION	activate assembly peephole postprocessing optimization
 
 set ENABLE_PREPROCESSING=yes
-set ENABLE_C_DEBUGGING=yes
-set ENABLE_C_OPTIMIZATION=no
-set ENABLE_ASSEMBLY_OPTIMIZATION=no
+set ENABLE_C_DEBUGGING=no
+set ENABLE_C_OPTIMIZATION=yes
+set ENABLE_ASSEMBLY_OPTIMIZATION=yes
 
 set C_OPTIMIZATION_LEVEL=-O2
 
