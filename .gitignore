@@ -1,0 +1,10 @@
+build/
+bin/
+manual/
+overlay/
+source/utils
+source/math
+source/lib
+doc/
+*.zip
+*.geany

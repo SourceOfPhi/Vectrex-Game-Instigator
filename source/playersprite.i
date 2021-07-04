@@ -1,0 +1,10 @@
+	{MOVE, TURN(ANGLE,  0 * SF, -2 * SF)},
+	{DRAW, TURN(ANGLE, -1 * SF,  0 * SF)},
+	{DRAW, TURN(ANGLE,  2 * SF,  2 * SF)},
+	{DRAW, TURN(ANGLE, -2 * SF,  2 * SF)},
+	{DRAW, TURN(ANGLE,  1 * SF,  0 * SF)},
+	{MOVE, TURN(ANGLE,  0 * SF, -1 * SF)},
+	{DRAW, TURN(ANGLE, -1 * SF,  0 * SF)},
+	{DRAW, TURN(ANGLE,  0 * SF, -2 * SF)},
+	{DRAW, TURN(ANGLE,  1 * SF,  0 * SF)},
+	{STOP, TURN(ANGLE,  0 * SF,  1 * SF)}
