@@ -19,25 +19,6 @@
 // warm reset: skip vectrex logo and keep ram data
 // after each reset, the game title screen is shown and then main() is called
 
-// start of program code
-//extern const struct packet_t (*const numbers[])[];
-//extern const struct packet_t explosion_shape[];
-
-// Array to store all enemies in game
-//struct enemy enemies[8] = {};
-// Field to store which enemies are alive, one bit each
-//unsigned int enemies_alive = 0x00;
-
-// Live total of the player
-//int lifes = 5;
-
-/*void insertNewEnemy(const struct enemy *const en, const unsigned int pos)
-{
-	assert(pos < 8);
-	enemies[pos] = *en;
-	enemies_alive |= 1 << pos;
-}*/
-
 extern enum levelState current_level_state;
 extern struct GameStats stats;
 extern unsigned int enemies_alive;
@@ -87,55 +68,6 @@ int main(void)
 			stats.level++;
 		}
 
-		/*Wait_Recal();
-		// ------  PROCESS INPUT AND HANDLE ENTITIES ------
-		// Handle player
-		player_update(&hero);
-
-		// Handle enemies
-		for (unsigned int i = 0; i < 8; i++)
-		{
-			if (enemies_alive & (1 << i))
-				enemy_update(&(enemies[i]));
-		}
-
-		if (lifes <= 0)
-		{
-			assert(0);
-		}
-
-		// ------  DRAW ------
-		// Draw player
-		player_draw(&hero);
-
-		// Draw enemies
-		for (unsigned int i = 0; i < 8; i++)
-		{
-			if (enemies_alive & (1 << i))
-				enemy_draw(&(enemies[i]));
-		}
-
-		// Draw life total
-		Reset0Ref();
-		dp_VIA_t1_cnt_lo = 110;
-		Moveto_d(100, 100);
-		dp_VIA_t1_cnt_lo = 8;
-		Intensity_5F();
-		Draw_VLp((void *)numbers[lifes - 1]);
-		*/
-		/*
-		Reset0Ref();
-		Dot_d(0,0);
-		
-		Reset0Ref();
-		dp_VIA_t1_cnt_lo = 110;
-		Dot_d(-120, -120);
-		Reset0Ref();
-		Dot_d(120, 120);
-		Reset0Ref();
-		Dot_d(120, -120);
-		Reset0Ref();
-		Dot_d(-120, 120);*/
 	} while (error_code);
 
 	// if error_code is <= 0, then a warm reset will be performed,

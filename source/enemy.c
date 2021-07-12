@@ -663,7 +663,6 @@ void enemy_update(struct enemy *en)
 	// Handle enemy state
 	(*(en->state))(en);
 
-	//enemy_handle_state(en);
 	if (!(en->state == enemy_state_exploding || en->state == enemy_state_dead))
 	{
 		if (isInFOV(&hero.pos, en))
@@ -675,9 +674,6 @@ void enemy_update(struct enemy *en)
 		en->angle = getAngle(&en->target, &en->pos);
 		en->shape = &(*enemy_shapes[en->angle])[0];
 
-		//en->fov[0] = (struct vector_t) {en1.pos.y, en1.pos.x};
-		//unsigned int fov_angle_neg = (en->angle >= 8) ? en->angle - 8 : 56 + en->angle;
-		//unsigned int fov_angle_pos = (en->angle < 54) ? en->angle + 8 : en->angle - 54;
 		unsigned int fov_angle_neg = ((en->angle << 2) - 32) >> 2;
 		unsigned int fov_angle_pos = ((en->angle << 2) + 32) >> 2;
 		en->fov[0] = (struct vector_t){fov_circle[fov_angle_neg].y + en->pos.y, fov_circle[fov_angle_neg].x + en->pos.x};
@@ -788,17 +784,7 @@ void enemy_attack(struct enemy *const en)
 			if (isInFOV(&(enemies[i].pos), en))
 			{
 				enemies[i].state = enemy_state_exploding;
-				//en->state = EXPLODING_S;
 			}
 		}
-		/*if (enemies_alive & (1 << i))
-		{
-			if (isInFOV(&(enemies[i].pos), en))
-			{
-
-				enemies_alive &= ~(1 << (en->id)); // kill self
-				enemies_alive &= ~(1 << i);		   // kill the other one
-			}
-		}*/
 	}
 }
