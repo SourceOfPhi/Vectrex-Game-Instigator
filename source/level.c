@@ -4,9 +4,12 @@
 #include "helpers.h"
 #include "assert/assert.h"
 #include "print/print.h"
+#include "random.h"
 #include <vectrex.h>
 
 extern const struct packet_t (*const numbers[])[];
+
+extern struct rng_t rng;
 
 const unsigned int enemy_count_per_level[] = {1, 2, 3, 4, 4, 5};
 
@@ -73,8 +76,8 @@ void level_init(void)
         struct vector_t pos;
         do
         {
-            pos.x = (int)Random();
-            pos.y = (int)Random();
+            pos.x = (int)rnd(&rng);
+            pos.y = (int)rnd(&rng);
         } while (isInRange(&pos, &((struct vector_t){0, 0})));
 
         struct enemy newen =
@@ -82,7 +85,7 @@ void level_init(void)
                 .id = i,
                 .pos = pos,
                 .shape = &enemy_shape[0],
-                .target = {0, 0},
+                .target = {(int)rnd(&rng), (int)rnd(&rng)},
                 .angle = 0,
                 .fov = {{-21, -1}, {-21, 1}},
                 .state = enemy_state_idle,

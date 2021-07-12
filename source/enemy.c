@@ -6,8 +6,8 @@
 #include "math/cos.h"
 #include "player.h"
 #include "assert/assert.h"
-#include "print/print.h"
 #include "level.h"
+#include "random.h"
 
 #define SIN(angle) sin_##angle
 #define COS(angle) cos_##angle
@@ -580,6 +580,7 @@ extern unsigned int enemies_left;
 extern struct player hero;
 extern unsigned int enemies_alive;
 extern struct GameStats stats;
+extern struct rng_t rng;
 
 void enemy_draw(const struct enemy *const en)
 {
@@ -697,7 +698,7 @@ void enemy_state_idle(struct enemy *const en)
 	}
 	else
 	{
-		en->idle_timer = Random() >> 1;
+		en->idle_timer = rnd(&rng) >> 1;
 		en->state = enemy_state_wander;
 	}
 }
@@ -707,7 +708,7 @@ void enemy_state_wander(struct enemy *const en)
 	if (en->pos.x == en->target.x && en->pos.y == en->target.y) // target reached
 	{
 		// Get a new random point to walk towards
-		en->target = (struct vector_t){(int)Random(), (int)Random()};
+		en->target = (struct vector_t){(int)rnd(&rng), (int)rnd(&rng)};
 		// Idle for a random amount of time before walking to the new target
 		en->state = enemy_state_idle;
 	}

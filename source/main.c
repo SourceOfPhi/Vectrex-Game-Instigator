@@ -10,6 +10,7 @@
 #include "print/print.h"
 #include "assert/assert.h"
 #include "level.h"
+#include "random.h"
 
 // ---------------------------------------------------------------------------
 // at system startup, a cold reset is performed
@@ -42,11 +43,15 @@ extern struct GameStats stats;
 extern unsigned int enemies_alive;
 extern unsigned int enemies_left;
 extern struct player hero;
+extern struct rng_t rng;
 
 int main(void)
 {
 	// local variables
 	unsigned int error_code = 255;
+
+	// seeds were chosen by pure intuition!
+	init_rng(&rng, 115, 116, 22);
 
 	// main loop
 	do

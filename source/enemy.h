@@ -5,15 +5,6 @@
 extern const struct vector_t fov_circle[];
 extern const struct packet_t enemy_shape[];
 
-/*enum EnemyState
-{
-	DEAD_S = 0,
-	IDLE_S,
-	WANDER_S,
-	HUNT_S,
-	EXPLODING_S
-};*/
-
 struct enemy
 {
 	unsigned int id;

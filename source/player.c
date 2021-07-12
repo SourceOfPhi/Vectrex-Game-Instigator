@@ -6,7 +6,6 @@
 #include "math/cos.h"
 #include "helpers.h"
 #include "assert/assert.h"
-#include "print/print.h"
 
 #define SIN(angle) sin_##angle
 #define COS(angle) cos_##angle
@@ -175,10 +174,6 @@ void player_update(struct player *hero)
 				// Destroy the enemy
 				target->state = enemy_state_exploding;
 				slash_angle = 0;
-			}
-			else
-			{
-				// The final attack has missed, game over
 			}
 		}
 	}
